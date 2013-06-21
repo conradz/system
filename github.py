@@ -1,7 +1,9 @@
 from requests import request
 from requests.auth import HTTPBasicAuth
-from fabric.api import prompt
+from fabric.api import prompt, run
 import json
+import ssh
+import git
 
 user = None
 auth = None
@@ -35,4 +37,12 @@ def get_key(title):
 def add_key(title, key):
 	get_auth()
 	api("POST", "/user/keys", data={ "title": title, "key": key })
+
+def clone(repo, dir=""):
+	git.clone("git@github.com:%s/%s" % (user, repo), dir)
+
+def setup():
+	host = run("hostname").strip()
+	if get_key(host) == None:
+		github.add_key(host, ssh.key())
 
